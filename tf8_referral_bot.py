@@ -36,7 +36,7 @@ def init_db():
 
 init_db()
 
-# Start command - handles both regular start and referral deep links
+# Start command - handles regular start, referral links, and button clicks
 @bot.message_handler(commands=['start'])
 def start(message):
     user_id = message.from_user.id
@@ -49,12 +49,71 @@ def start(message):
         referral_code = None
         invited_by = None
         
-        # Parse arguments for referral code
+        # Parse arguments for referral code or join parameter
         args = message.text.split()
         if len(args) > 1:
-            referrer_code = args[1]
+            param = args[1]
             
-            # Check if referrer exists
+            # If param is 'join', user came from the button - show full welcome
+            if param == 'join':
+                # Check/create user
+                c.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
+                user = c.fetchone()
+                
+                if not user:
+                    referral_code = f"{username}_{user_id}"
+                    c.execute('''INSERT INTO users (user_id, username, referral_code, joined_date)
+                                 VALUES (?, ?, ?, ?)''',
+                              (user_id, username, referral_code, datetime.now()))
+                    conn.commit()
+                else:
+                    c.execute("SELECT referral_code FROM users WHERE user_id = ?", (user_id,))
+                    referral_code = c.fetchone()[0]
+                
+                conn.close()
+                
+                # Full welcome message with commands
+                welcome_text = f"""🎉 BIENVENUE AU CONCOURS D'INVITATION !
+
+Ton code : <code>{referral_code}</code>
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💰 COMMENT ÇA MARCHE :
+
+1️⃣ <b>Partage ton lien</b>
+https://t.me/TF8invitationbot?start={referral_code}
+
+2️⃣ <b>Chaque ami qui se join = +100 points ⭐</b>
+
+3️⃣ <b>Échange tes points en récompenses</b>
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 <b>COMMANDES DISPONIBLES :</b>
+
+/mystats - Voir tes statistiques
+/leaderboard - Classement top 10
+/redeem 100 - Convertir 100 points
+/help - Aide complète
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🏆 <b>RÉCOMPENSES :</b>
+
+100 ⭐ = 10€ crédit
+500 ⭐ = 100€ crédit
+1000 ⭐ = 500€ prize
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ Partage ton code et commence à gagner !"""
+                
+                bot.send_message(user_id, welcome_text, parse_mode="HTML")
+                return
+            
+            # Otherwise, it's a referral code
+            referrer_code = param
             c.execute("SELECT user_id FROM users WHERE referral_code = ?", (referrer_code,))
             referrer = c.fetchone()
             
@@ -246,6 +305,71 @@ Ton crédit sera appliqué dans 24h.
         logger.error(f"Redeem error: {e}")
         bot.reply_to(message, "❌ Erreur lors de la conversion")
 
+# Setup channel command - sends message with buttons to the channel
+@bot.message_handler(commands=['setup_channel'])
+def setup_channel(message):
+    """Send the contest announcement with buttons to the channel"""
+    try:
+        # Get the channel ID from the message (for group/channel)
+        channel_id = message.chat.id
+        
+        # Create inline buttons
+        markup = telebot.types.InlineKeyboardMarkup()
+        
+        # Button to join the contest
+        join_button = telebot.types.InlineKeyboardButton(
+            text="🎁 Rejoindre le concours",
+            url="https://t.me/TF8invitationbot?start=join"
+        )
+        
+        # Button to see leaderboard
+        leaderboard_button = telebot.types.InlineKeyboardButton(
+            text="🏆 Leaderboard",
+            url="https://t.me/TF8invitationbot?start=leaderboard"
+        )
+        
+        # Button for help
+        help_button = telebot.types.InlineKeyboardButton(
+            text="❓ Aide",
+            url="https://t.me/TF8invitationbot?start=help"
+        )
+        
+        # Add buttons to markup
+        markup.add(join_button)
+        markup.add(leaderboard_button, help_button)
+        
+        # Message content
+        message_text = """🎁 <b>CONCOURS D'INVITATION</b>
+
+Participez et gagnez jusqu'à <b>500€ de récompenses ! 🏆</b>
+
+<b>💰 COMMENT ÇA MARCHE :</b>
+
+1️⃣ Rejoignez le concours
+2️⃣ Partagez votre code d'invitation
+3️⃣ Chaque ami qui se joint = +100 points ⭐
+4️⃣ Échangez vos points contre des récompenses
+
+<b>🏆 RÉCOMPENSES :</b>
+
+100 ⭐ = 10€ crédit
+500 ⭐ = 100€ crédit
+1000 ⭐ = 500€ prize
+
+<b>👇 Cliquez sur le bouton ci-dessous pour commencer !</b>"""
+        
+        # Send the message with buttons
+        bot.send_message(channel_id, message_text, 
+                        parse_mode="HTML", 
+                        reply_markup=markup)
+        
+        # Confirm to the user
+        bot.reply_to(message, "✅ Message avec boutons envoyé dans le canal !")
+        
+    except Exception as e:
+        logger.error(f"Setup channel error: {e}")
+        bot.reply_to(message, f"❌ Erreur : {str(e)}")
+
 # Help command
 @bot.message_handler(commands=['help'])
 def help_command(message):
@@ -271,6 +395,56 @@ Des problèmes ? Contacte le support.
 @bot.message_handler(func=lambda message: True)
 def default_handler(message):
     bot.reply_to(message, "Je ne comprends pas cette commande. Tape /help pour l'aide.")
+
+# Admin command - post invitation button to channel
+@bot.message_handler(commands=['announce'])
+def announce(message):
+    """Post the invitation button to the channel"""
+    
+    # Only admins can use this
+    user_id = message.from_user.id
+    ADMIN_IDS = [user_id]  # Change avec tes IDs admin
+    
+    if user_id not in ADMIN_IDS:
+        bot.reply_to(message, "❌ Tu n'as pas la permission")
+        return
+    
+    try:
+        # Créer le bouton
+        markup = telebot.types.InlineKeyboardMarkup()
+        
+        # Bouton qui ouvre le bot en DM avec /start=join
+        button = telebot.types.InlineKeyboardButton(
+            text="🎁 Rejoindre le concours",
+            url="https://t.me/TF8invitationbot?start=join"
+        )
+        markup.add(button)
+        
+        # Message avec le bouton
+        message_text = """🎉 CONCOURS D'INVITATION - TF8
+
+Gagne des points en invitant tes amis !
+
+💰 COMMENT ÇA MARCHE :
+• Clique sur le bouton ci-dessous
+• Reçois ton code d'invitation unique
+• Partage-le avec tes amis
+• +100 points par ami ⭐
+• Échange tes points en récompenses
+
+🏆 RÉCOMPENSES :
+100 ⭐ = 10€
+500 ⭐ = 100€
+1000 ⭐ = 500€
+
+C'est parti ! 🚀"""
+        
+        bot.send_message(message.chat.id, message_text, reply_markup=markup)
+        bot.send_message(message.from_user.id, "✅ Bouton posté dans le canal !")
+        
+    except Exception as e:
+        logger.error(f"Announce error: {e}")
+        bot.reply_to(message, f"❌ Erreur : {str(e)}")
 
 # Health check endpoint (pour Railway)
 @bot.message_handler(commands=['ping'])
