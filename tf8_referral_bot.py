@@ -73,41 +73,41 @@ def start(message):
                 conn.close()
                 
                 # Full welcome message with commands
-                welcome_text = f"""🎉 BIENVENUE AU CONCOURS D'INVITATION !
+                welcome_text = f"""🎉 WELCOME TO THE INVITATION CONTEST !
 
-Ton code : <code>{referral_code}</code>
+Your code : <code>{referral_code}</code>
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-💰 COMMENT ÇA MARCHE :
+💰 HOW IT WORKS :
 
-1️⃣ <b>Partage ton lien</b>
+1️⃣ <b>Share your link</b>
 https://t.me/TF8invitationbot?start={referral_code}
 
-2️⃣ <b>Chaque ami qui se join = +100 points ⭐</b>
+2️⃣ <b>Each friend who joins = +100 points ⭐</b>
 
-3️⃣ <b>Échange tes points en récompenses</b>
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-📊 <b>COMMANDES DISPONIBLES :</b>
-
-/mystats - Voir tes statistiques
-/leaderboard - Classement top 10
-/redeem 100 - Convertir 100 points
-/help - Aide complète
+3️⃣ <b>Exchange your points for rewards</b>
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-🏆 <b>RÉCOMPENSES :</b>
+📊 <b>AVAILABLE COMMANDS :</b>
 
-100 ⭐ = 10€ crédit
-500 ⭐ = 100€ crédit
-1000 ⭐ = 500€ prize
+/mystats - View your statistics
+/leaderboard - Top 10 ranking
+/redeem 100 - Convert 100 points
+/help - Full help
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-✨ Partage ton code et commence à gagner !"""
+🏆 <b>REWARDS :</b>
+
+100 ⭐ = €10 credit
+500 ⭐ = €100 credit
+1000 ⭐ = €500 prize
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ Share your code and start earning !"""
                 
                 bot.send_message(user_id, welcome_text, parse_mode="HTML")
                 return
@@ -115,53 +115,53 @@ https://t.me/TF8invitationbot?start={referral_code}
             # If param is 'help' - show full help
             elif param == 'help':
                 conn.close()
-                help_text = """📚 <b>AIDE COMPLÈTE</b>
+                help_text = """📚 <b>FULL HELP</b>
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-<b>🎁 COMMENT PARTICIPER :</b>
+<b>🎁 HOW TO PARTICIPATE :</b>
 
-1️⃣ Rejoignez le concours
-2️⃣ Récupérez votre code unique
-3️⃣ Partagez votre lien avec des amis
-4️⃣ Gagnez des points à chaque invitation
+1️⃣ Join the contest
+2️⃣ Get your unique code
+3️⃣ Share your link with friends
+4️⃣ Earn points for each invitation
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-<b>📊 COMMANDES PRINCIPALES :</b>
+<b>📊 MAIN COMMANDS :</b>
 
-<code>/start</code> - Démarrer
-<code>/mystats</code> - Voir ton code et tes stats
+<code>/start</code> - Start
+<code>/mystats</code> - View your code and stats
 <code>/leaderboard</code> - Top 10 invitants
-<code>/redeem 100</code> - Convertir 100 points
+<code>/redeem 100</code> - Convert 100 points
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-<b>💰 SYSTÈME DE POINTS :</b>
+<b>💰 POINTS SYSTEM :</b>
 
-Chaque ami qui se joint via ton lien = +100 ⭐
+Each friend who joins via your link = +100 ⭐
 
-<b>🏆 RÉCOMPENSES :</b>
-100 ⭐ = 10€
-500 ⭐ = 100€
-1000 ⭐ = 500€
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-<b>❓ QUESTIONS FRÉQUENTES :</b>
-
-Q: Combien de temps pour les points ?
-R: Immédiat !
-
-Q: Puis-je rediriger plusieurs fois ?
-R: Oui, pas de limite !
-
-Q: Comment je récupère mon argent ?
-R: Via la commande /redeem
+<b>🏆 REWARDS :</b>
+100 ⭐ = €10
+500 ⭐ = €100
+1000 ⭐ = €500
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Besoin d'aide ? Tape /mystats pour commencer !"""
+<b>❓ FREQUENTLY ASKED QUESTIONS :</b>
+
+Q: How long to receive points ?
+R: Immediately !
+
+Q: Can I share multiple times ?
+R: Yes, no limit !
+
+Q: How do I get my money ?
+R: Use the /redeem command
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Need help ? Tap /mystats to start !"""
                 
                 bot.send_message(user_id, help_text, parse_mode="HTML")
                 return
@@ -173,20 +173,20 @@ Besoin d'aide ? Tape /mystats pour commencer !"""
                     users = c.fetchall()
                     conn.close()
                     
-                    leaderboard_text = "<b>🏆 TOP 10 INVITANTS</b>\n\n"
+                    leaderboard_text = "<b>🏆 TOP 10 INVITERS</b>\n\n"
                     
                     if users:
                         for i, (username, invites, points) in enumerate(users, 1):
                             medal = "🥇" if i == 1 else "🥈" if i == 2 else "🥉" if i == 3 else f"{i}️⃣"
                             leaderboard_text += f"{medal} <b>@{username}</b>\n   {invites} invites • {points} ⭐\n\n"
                     else:
-                        leaderboard_text += "Pas encore de participants"
+                        leaderboard_text += "No participants yet"
                     
                     bot.send_message(user_id, leaderboard_text, parse_mode="HTML")
                     return
                 except Exception as e:
                     logger.error(f"Leaderboard error: {e}")
-                    bot.send_message(user_id, "❌ Erreur lors du leaderboard")
+                    bot.send_message(user_id, "❌ Error loading leaderboard")
                     return
             
             # Otherwise, it's a referral code
@@ -216,7 +216,7 @@ Besoin d'aide ? Tape /mystats pour commencer !"""
                 # Notify referrer
                 try:
                     bot.send_message(invited_by, 
-                                   f"✅ @{username} a rejoint via ton lien !\n+1 invite • +100 ⭐")
+                                   f"✅ @{username} joined via your link !\n+1 invite • +100 ⭐")
                 except:
                     pass
             
@@ -227,28 +227,28 @@ Besoin d'aide ? Tape /mystats pour commencer !"""
         
         conn.close()
         
-        message_text = f"""🎁 BIENVENUE AU CONCOURS D'INVITATION !
+        message_text = f"""🎁 WELCOME TO THE INVITATION CONTEST !
 
-Ton code : <code>{referral_code}</code>
+Your code : <code>{referral_code}</code>
 
-💰 COMMENT ÇA MARCHE :
-1. Partage ton lien d'invitation
-2. Chaque ami qui se join = +100 points ⭐
-3. Échange tes points en récompenses
+💰 HOW IT WORKS :
+1. Share your invitation link
+2. Each friend who joins = +100 points ⭐
+3. Exchange your points for rewards
 
-Ton lien :
+Your link :
 https://t.me/TF8invitationbot?start={referral_code}
 
-📊 Commandes :
-/leaderboard - Voir le classement
-/mystats - Tes statistiques
-/redeem 100 - Convertir points
-/help - Aide complète
+📊 Commands :
+/leaderboard - View the ranking
+/mystats - Your statistics
+/redeem 100 - Convert points
+/help - Full help
 
-🏆 RÉCOMPENSES :
-100 ⭐ = 10€
-500 ⭐ = 100€
-1000 ⭐ = 500€"""
+🏆 REWARDS :
+100 ⭐ = €10
+500 ⭐ = €100
+1000 ⭐ = €500"""
         
         bot.send_message(user_id, message_text, parse_mode="HTML")
         
@@ -267,20 +267,20 @@ def leaderboard(message):
         users = c.fetchall()
         conn.close()
         
-        leaderboard_text = "🏆 TOP 10 INVITANTS\n\n"
+        leaderboard_text = "🏆 TOP 10 INVITERS\n\n"
         
         if users:
             for i, (username, invites, points) in enumerate(users, 1):
                 medal = "🥇" if i == 1 else "🥈" if i == 2 else "🥉" if i == 3 else f"{i}️⃣"
                 leaderboard_text += f"{medal} @{username}\n   {invites} invites • {points} ⭐\n\n"
         else:
-            leaderboard_text += "Pas encore de participants"
+            leaderboard_text += "No participants yet"
         
         bot.send_message(message.chat.id, leaderboard_text)
         
     except Exception as e:
         logger.error(f"Leaderboard error: {e}")
-        bot.send_message(message.chat.id, "❌ Erreur lors du leaderboard")
+        bot.send_message(message.chat.id, "❌ Error loading leaderboard")
 
 # My stats command
 @bot.message_handler(commands=['mystats'])
@@ -296,28 +296,28 @@ def my_stats(message):
         
         if user_data:
             code, invites, points = user_data
-            stats = f"""📊 TES STATISTIQUES
+            stats = f"""📊 YOUR STATISTICS
 
 Code : <code>{code}</code>
 Invitations : {invites}
 Points : {points} ⭐
 
-💰 Récompenses disponibles :
-100 ⭐ = 10€
-500 ⭐ = 100€
-1000 ⭐ = 500€
+💰 Available rewards :
+100 ⭐ = €10
+500 ⭐ = €100
+1000 ⭐ = €500
 
-Partage ton lien :
+Share your link :
 https://t.me/TF8invitationbot?start={code}
 
-Commande : /redeem 100"""
+Command : /redeem 100"""
             bot.send_message(user_id, stats, parse_mode="HTML")
         else:
-            bot.send_message(user_id, "❌ Tu n'es pas enregistré. Tape /start d'abord.")
+            bot.send_message(user_id, "❌ You are not registered. Type /start first.")
         
     except Exception as e:
         logger.error(f"Mystats error: {e}")
-        bot.send_message(message.chat.id, "❌ Erreur")
+        bot.send_message(message.chat.id, "❌ Error")
 
 # Redeem command
 @bot.message_handler(commands=['redeem'])
@@ -326,17 +326,17 @@ def redeem(message):
     args = message.text.split()
     
     if len(args) < 2:
-        bot.reply_to(message, "Usage : /redeem 100\n(remplace 100 par le nombre de points)")
+        bot.reply_to(message, "Usage : /redeem 100\n(replace 100 with the number of points)")
         return
     
     try:
         points_to_redeem = int(args[1])
     except ValueError:
-        bot.reply_to(message, "❌ Nombre invalide")
+        bot.reply_to(message, "❌ Invalid number")
         return
     
     if points_to_redeem <= 0:
-        bot.reply_to(message, "❌ Le nombre doit être positif")
+        bot.reply_to(message, "❌ The number must be positive")
         return
     
     try:
@@ -347,18 +347,18 @@ def redeem(message):
         result = c.fetchone()
         
         if not result:
-            bot.reply_to(message, "❌ Tu n'es pas enregistré. Tape /start")
+            bot.reply_to(message, "❌ You are not registered. Type /start")
             conn.close()
             return
         
         current_points = result[0]
         
         if current_points < points_to_redeem:
-            bot.reply_to(message, f"❌ Tu as seulement {current_points} points")
+            bot.reply_to(message, f"❌ You only have {current_points} points")
             conn.close()
             return
         
-        # Conversion: 100 points = 10€
+        # Conversion: 100 points = €10
         reward_value = (points_to_redeem / 100) * 10
         
         c.execute("UPDATE users SET points = points - ? WHERE user_id = ?", 
@@ -367,20 +367,20 @@ def redeem(message):
         conn.close()
         
         message_text = f"""
-✅ Redemption validée !
+✅ Redemption validated !
 
-Points convertis : -{points_to_redeem}
-Valeur : {reward_value}€
+Points converted : -{points_to_redeem}
+Value : €{reward_value}
 
-Merci pour ta participation ! 🎉
-Ton crédit sera appliqué dans 24h.
+Thank you for participating ! 🎉
+Your credit will be applied within 24 hours.
         """
         
         bot.reply_to(message, message_text)
         
     except Exception as e:
         logger.error(f"Redeem error: {e}")
-        bot.reply_to(message, "❌ Erreur lors de la conversion")
+        bot.reply_to(message, "❌ Error during conversion")
 
 # Setup channel command - sends message with buttons to the channel
 @bot.message_handler(commands=['setup_channel'])
@@ -395,7 +395,7 @@ def setup_channel(message):
         
         # Button to join the contest
         join_button = telebot.types.InlineKeyboardButton(
-            text="🎁 Rejoindre le concours",
+            text="🎁 Join the contest",
             url="https://t.me/TF8invitationbot?start=join"
         )
         
@@ -407,7 +407,7 @@ def setup_channel(message):
         
         # Button for help
         help_button = telebot.types.InlineKeyboardButton(
-            text="❓ Aide",
+            text="❓ Help",
             url="https://t.me/TF8invitationbot?start=help"
         )
         
@@ -416,24 +416,24 @@ def setup_channel(message):
         markup.add(leaderboard_button, help_button)
         
         # Message content
-        message_text = """🎁 <b>CONCOURS D'INVITATION</b>
+        message_text = """🎁 <b>INVITATION CONTEST</b>
 
-Participez et gagnez jusqu'à <b>500€ de récompenses ! 🏆</b>
+Participate and win up to <b>€500 in rewards ! 🏆</b>
 
-<b>💰 COMMENT ÇA MARCHE :</b>
+<b>💰 HOW IT WORKS :</b>
 
-1️⃣ Rejoignez le concours
-2️⃣ Partagez votre code d'invitation
-3️⃣ Chaque ami qui se joint = +100 points ⭐
-4️⃣ Échangez vos points contre des récompenses
+1️⃣ Join the contest
+2️⃣ Share your invitation code
+3️⃣ Each friend who joins = +100 points ⭐
+4️⃣ Exchange your points for rewards
 
-<b>🏆 RÉCOMPENSES :</b>
+<b>🏆 REWARDS :</b>
 
-100 ⭐ = 10€ crédit
-500 ⭐ = 100€ crédit
-1000 ⭐ = 500€ prize
+100 ⭐ = €10 credit
+500 ⭐ = €100 credit
+1000 ⭐ = €500 prize
 
-<b>👇 Cliquez sur le bouton ci-dessous pour commencer !</b>"""
+<b>👇 Click the button below to start !</b>"""
         
         # Send the message with buttons
         bot.send_message(channel_id, message_text, 
@@ -441,37 +441,37 @@ Participez et gagnez jusqu'à <b>500€ de récompenses ! 🏆</b>
                         reply_markup=markup)
         
         # Confirm to the user
-        bot.reply_to(message, "✅ Message avec boutons envoyé dans le canal !")
+        bot.reply_to(message, "✅ Message with buttons sent to the channel !")
         
     except Exception as e:
         logger.error(f"Setup channel error: {e}")
-        bot.reply_to(message, f"❌ Erreur : {str(e)}")
+        bot.reply_to(message, f"❌ Error : {str(e)}")
 
 # Help command
 @bot.message_handler(commands=['help'])
 def help_command(message):
     help_text = """
-📚 AIDE COMPLÈTE
+📚 FULL HELP
 
-/start - Démarrer et obtenir ton code d'invitation
-/mystats - Voir tes statistiques
-/leaderboard - Classement des meilleurs invitants
-/redeem <points> - Convertir tes points en reward
+/start - Start and get your invitation code
+/mystats - View your statistics
+/leaderboard - Ranking of best inviters
+/redeem <points> - Convert your points to reward
 
-💡 EXEMPLE :
-/redeem 100 → convertit 100 points en 10€
+💡 EXAMPLE :
+/redeem 100 → converts 100 points to €10
 
-🤝 PARTAGE TON LIEN :
-Chaque ami qui se joint = +100 points ⭐
+🤝 SHARE YOUR LINK :
+Each friend who joins = +100 points ⭐
 
-Des problèmes ? Contacte le support.
+Issues ? Contact support.
     """
     bot.send_message(message.chat.id, help_text)
 
 # Default handler
 @bot.message_handler(func=lambda message: True)
 def default_handler(message):
-    bot.reply_to(message, "Je ne comprends pas cette commande. Tape /help pour l'aide.")
+    bot.reply_to(message, "I don't understand this command. Type /help for help.")
 
 # Admin command - post invitation button to channel
 @bot.message_handler(commands=['announce'])
@@ -480,48 +480,48 @@ def announce(message):
     
     # Only admins can use this
     user_id = message.from_user.id
-    ADMIN_IDS = [user_id]  # Change avec tes IDs admin
+    ADMIN_IDS = [user_id]  # Change with your admin IDs
     
     if user_id not in ADMIN_IDS:
-        bot.reply_to(message, "❌ Tu n'as pas la permission")
+        bot.reply_to(message, "❌ You don't have permission")
         return
     
     try:
-        # Créer le bouton
+        # Create the button
         markup = telebot.types.InlineKeyboardMarkup()
         
-        # Bouton qui ouvre le bot en DM avec /start=join
+        # Button that opens the bot in DM with /start=join
         button = telebot.types.InlineKeyboardButton(
-            text="🎁 Rejoindre le concours",
+            text="🎁 Join the contest",
             url="https://t.me/TF8invitationbot?start=join"
         )
         markup.add(button)
         
-        # Message avec le bouton
-        message_text = """🎉 CONCOURS D'INVITATION - TF8
+        # Message with the button
+        message_text = """🎉 INVITATION CONTEST - TF8
 
-Gagne des points en invitant tes amis !
+Earn points by inviting your friends !
 
-💰 COMMENT ÇA MARCHE :
-• Clique sur le bouton ci-dessous
-• Reçois ton code d'invitation unique
-• Partage-le avec tes amis
-• +100 points par ami ⭐
-• Échange tes points en récompenses
+💰 HOW IT WORKS :
+• Click the button below
+• Receive your unique invitation code
+• Share it with your friends
+• +100 points per friend ⭐
+• Exchange your points for rewards
 
-🏆 RÉCOMPENSES :
-100 ⭐ = 10€
-500 ⭐ = 100€
-1000 ⭐ = 500€
+🏆 REWARDS :
+100 ⭐ = €10
+500 ⭐ = €100
+1000 ⭐ = €500
 
-C'est parti ! 🚀"""
+Let's go ! 🚀"""
         
         bot.send_message(message.chat.id, message_text, reply_markup=markup)
-        bot.send_message(message.from_user.id, "✅ Bouton posté dans le canal !")
+        bot.send_message(message.from_user.id, "✅ Button posted in the channel !")
         
     except Exception as e:
         logger.error(f"Announce error: {e}")
-        bot.reply_to(message, f"❌ Erreur : {str(e)}")
+        bot.reply_to(message, f"❌ Error : {str(e)}")
 
 # Health check endpoint (pour Railway)
 @bot.message_handler(commands=['ping'])
