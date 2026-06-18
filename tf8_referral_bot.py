@@ -112,6 +112,83 @@ https://t.me/TF8invitationbot?start={referral_code}
                 bot.send_message(user_id, welcome_text, parse_mode="HTML")
                 return
             
+            # If param is 'help' - show full help
+            elif param == 'help':
+                conn.close()
+                help_text = """📚 <b>AIDE COMPLÈTE</b>
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<b>🎁 COMMENT PARTICIPER :</b>
+
+1️⃣ Rejoignez le concours
+2️⃣ Récupérez votre code unique
+3️⃣ Partagez votre lien avec des amis
+4️⃣ Gagnez des points à chaque invitation
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<b>📊 COMMANDES PRINCIPALES :</b>
+
+<code>/start</code> - Démarrer
+<code>/mystats</code> - Voir ton code et tes stats
+<code>/leaderboard</code> - Top 10 invitants
+<code>/redeem 100</code> - Convertir 100 points
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<b>💰 SYSTÈME DE POINTS :</b>
+
+Chaque ami qui se joint via ton lien = +100 ⭐
+
+<b>🏆 RÉCOMPENSES :</b>
+100 ⭐ = 10€
+500 ⭐ = 100€
+1000 ⭐ = 500€
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<b>❓ QUESTIONS FRÉQUENTES :</b>
+
+Q: Combien de temps pour les points ?
+R: Immédiat !
+
+Q: Puis-je rediriger plusieurs fois ?
+R: Oui, pas de limite !
+
+Q: Comment je récupère mon argent ?
+R: Via la commande /redeem
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Besoin d'aide ? Tape /mystats pour commencer !"""
+                
+                bot.send_message(user_id, help_text, parse_mode="HTML")
+                return
+            
+            # If param is 'leaderboard' - show leaderboard
+            elif param == 'leaderboard':
+                try:
+                    c.execute("SELECT username, invites, points FROM users ORDER BY invites DESC LIMIT 10")
+                    users = c.fetchall()
+                    conn.close()
+                    
+                    leaderboard_text = "<b>🏆 TOP 10 INVITANTS</b>\n\n"
+                    
+                    if users:
+                        for i, (username, invites, points) in enumerate(users, 1):
+                            medal = "🥇" if i == 1 else "🥈" if i == 2 else "🥉" if i == 3 else f"{i}️⃣"
+                            leaderboard_text += f"{medal} <b>@{username}</b>\n   {invites} invites • {points} ⭐\n\n"
+                    else:
+                        leaderboard_text += "Pas encore de participants"
+                    
+                    bot.send_message(user_id, leaderboard_text, parse_mode="HTML")
+                    return
+                except Exception as e:
+                    logger.error(f"Leaderboard error: {e}")
+                    bot.send_message(user_id, "❌ Erreur lors du leaderboard")
+                    return
+            
             # Otherwise, it's a referral code
             referrer_code = param
             c.execute("SELECT user_id FROM users WHERE referral_code = ?", (referrer_code,))
