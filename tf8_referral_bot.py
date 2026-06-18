@@ -46,10 +46,6 @@ def start(message):
         conn = sqlite3.connect('referral.db')
         c = conn.cursor()
         
-        # Check if user exists
-        c.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
-        user = c.fetchone()
-        
         referral_code = None
         invited_by = None
         
@@ -64,6 +60,10 @@ def start(message):
             
             if referrer:
                 invited_by = referrer[0]
+        
+        # Check if user exists
+        c.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
+        user = c.fetchone()
         
         if not user:
             # Create new user
@@ -91,10 +91,9 @@ def start(message):
         
         conn.close()
         
-        message_text = f"""
-🎁 BIENVENUE AU CONCOURS D'INVITATION !
+        message_text = f"""🎁 BIENVENUE AU CONCOURS D'INVITATION !
 
-Ton code : `{referral_code}`
+Ton code : <code>{referral_code}</code>
 
 💰 COMMENT ÇA MARCHE :
 1. Partage ton lien d'invitation
@@ -113,14 +112,13 @@ https://t.me/TF8invitationbot?start={referral_code}
 🏆 RÉCOMPENSES :
 100 ⭐ = 10€
 500 ⭐ = 100€
-1000 ⭐ = 500€
-        """
+1000 ⭐ = 500€"""
         
-        bot.send_message(user_id, message_text, parse_mode="Markdown")
+        bot.send_message(user_id, message_text, parse_mode="HTML")
         
     except Exception as e:
         logger.error(f"Start command error: {e}")
-        bot.send_message(message.chat.id, "❌ Erreur. Réessaie /start")
+        bot.send_message(message.chat.id, f"❌ Erreur: {str(e)}")
 
 # Leaderboard command
 @bot.message_handler(commands=['leaderboard'])
@@ -162,10 +160,9 @@ def my_stats(message):
         
         if user_data:
             code, invites, points = user_data
-            stats = f"""
-📊 TES STATISTIQUES
+            stats = f"""📊 TES STATISTIQUES
 
-Code : `{code}`
+Code : <code>{code}</code>
 Invitations : {invites}
 Points : {points} ⭐
 
@@ -177,9 +174,8 @@ Points : {points} ⭐
 Partage ton lien :
 https://t.me/TF8invitationbot?start={code}
 
-Commande : /redeem 100
-            """
-            bot.send_message(user_id, stats, parse_mode="Markdown")
+Commande : /redeem 100"""
+            bot.send_message(user_id, stats, parse_mode="HTML")
         else:
             bot.send_message(user_id, "❌ Tu n'es pas enregistré. Tape /start d'abord.")
         
