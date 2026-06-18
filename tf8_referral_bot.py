@@ -175,10 +175,23 @@ Need help ? Tap /mystats to start !"""
                     
                     leaderboard_text = "<b>🏆 TOP 10 INVITERS</b>\n\n"
                     
+                    # Define rewards for top 3
+                    rewards = {
+                        1: "🥇 <b>1st place:</b> $50,000 Instant or 2-Step Account (your choice)",
+                        2: "🥈 <b>2nd place:</b> $10,000 Instant or 2-Step Account (your choice)",
+                        3: "🥉 <b>3rd place:</b> $5,000 Instant or 2-Step Account (your choice)"
+                    }
+                    
                     if users:
                         for i, (username, invites, points) in enumerate(users, 1):
                             medal = "🥇" if i == 1 else "🥈" if i == 2 else "🥉" if i == 3 else f"{i}️⃣"
-                            leaderboard_text += f"{medal} <b>@{username}</b>\n   {invites} invites • {points} ⭐\n\n"
+                            leaderboard_text += f"{medal} <b>@{username}</b>\n   {invites} invites\n"
+                            
+                            # Add reward if top 3
+                            if i in rewards:
+                                leaderboard_text += f"   {rewards[i]}\n"
+                            
+                            leaderboard_text += "\n"
                     else:
                         leaderboard_text += "No participants yet"
                     
@@ -269,10 +282,23 @@ def leaderboard(message):
         
         leaderboard_text = "🏆 TOP 10 INVITERS\n\n"
         
+        # Define rewards for top 3
+        rewards = {
+            1: "🥇 1st place: $50,000 Instant or 2-Step Account (your choice)",
+            2: "🥈 2nd place: $10,000 Instant or 2-Step Account (your choice)",
+            3: "🥉 3rd place: $5,000 Instant or 2-Step Account (your choice)"
+        }
+        
         if users:
             for i, (username, invites, points) in enumerate(users, 1):
                 medal = "🥇" if i == 1 else "🥈" if i == 2 else "🥉" if i == 3 else f"{i}️⃣"
-                leaderboard_text += f"{medal} @{username}\n   {invites} invites • {points} ⭐\n\n"
+                leaderboard_text += f"{medal} @{username}\n   {invites} invites\n"
+                
+                # Add reward if top 3
+                if i in rewards:
+                    leaderboard_text += f"   {rewards[i]}\n"
+                
+                leaderboard_text += "\n"
         else:
             leaderboard_text += "No participants yet"
         
